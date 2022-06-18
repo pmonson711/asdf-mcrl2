@@ -20,9 +20,8 @@ download_release "$ASDF_INSTALL_VERSION" "$release_file"
 mkdir "$ASDF_DOWNLOAD_PATH/extract"
 mkdir "$ASDF_DOWNLOAD_PATH/bin"
 dpkg -x "$release_file" "$ASDF_DOWNLOAD_PATH/extract" || fail "Could not extract $release_file"
-mv "$ASDF_DOWNLOAD_PATH/extract/usr/bin" "$ASDF_DOWNLOAD_PATH/bin"
-ls -sl "$ASDF_DOWNLOAD_PATH/bin/"
-chmod +x "$ASDF_DOWNLOAD_PATH/bin/*"
+mv "$ASDF_DOWNLOAD_PATH/extract/usr/bin/*" "$ASDF_DOWNLOAD_PATH/bin/"
+ls -al "$ASDF_DOWNLOAD_PATH/bin/*"
 
 # Remove the tar.gz file since we don't need to keep it
 rm "$release_file"
