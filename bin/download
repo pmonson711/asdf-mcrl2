@@ -17,11 +17,7 @@ release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.gz"
 download_release "$ASDF_INSTALL_VERSION" "$release_file"
 
 #  Extract contents of tar.gz file into the download directory
-mkdir "$ASDF_DOWNLOAD_PATH/extract"
-mkdir "$ASDF_DOWNLOAD_PATH/bin"
-dpkg -x "$release_file" "$ASDF_DOWNLOAD_PATH/extract" || fail "Could not extract $release_file"
-cp "$ASDF_DOWNLOAD_PATH/extract/usr/bin/mcrl22lps" "$ASDF_DOWNLOAD_PATH/bin/"
+dpkg -x "$release_file" "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
 
 # Remove the tar.gz file since we don't need to keep it
 rm "$release_file"
-rm -Rf "$ASDF_DOWNLOAD_PATH/extract"
