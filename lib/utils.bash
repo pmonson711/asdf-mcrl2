@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for mcrl2.
-GH_REPO="https://github.com/pmonson711/mcrl2"
+GH_REPO="https://github.com/mcrl2org/mcrl2"
 TOOL_NAME="mcrl2"
 TOOL_TEST="mcrl22lps --version"
 
