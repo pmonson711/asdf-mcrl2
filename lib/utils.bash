@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for mcrl2.
-GH_REPO="https://github.com/pmonson711/mcrl2"
+GH_REPO="https://github.com/mcrl2org/mcrl2"
 TOOL_NAME="mcrl2"
 TOOL_TEST="mcrl22lps --version"
 
@@ -26,8 +26,8 @@ sort_versions() {
 
 list_github_tags() {
   git ls-remote --tags --refs "$GH_REPO" |
-    grep -o 'refs/tags/.*' | cut -d/ -f3- |
-    sed 's/^v//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
+    grep -o 'refs/tags/mcrl2-.*' | cut -d/ -f3- |
+    sed 's/^mcrl2-//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
 }
 
 list_all_versions() {
@@ -42,7 +42,7 @@ download_release() {
   filename="$2"
 
   # TODO: Adapt the release URL convention for mcrl2
-  url="$GH_REPO/archive/v${version}.tar.gz"
+  url="$GH_REPO/releases/download/mcrl2-${version}/mcrl2-${version}_x86_64.deb"
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -64,7 +64,7 @@ install_version() {
     # TODO: Asert mcrl2 executable exists.
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
-    test -x "$install_path/bin/$tool_cmd" || fail "Expected $install_path/bin/$tool_cmd to be executable."
+    test -x "$install_path/usr/bin/$tool_cmd" || fail "Expected $install_path/usr/bin/$tool_cmd to be executable."
 
     echo "$TOOL_NAME $version installation was successful!"
   ) || (
