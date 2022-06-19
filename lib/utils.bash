@@ -71,8 +71,7 @@ extract_release() {
   if command -v dpkg &>/dev/null; then
     dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
   elif command -v sw_vers &>/dev/null; then
-    mountdev=$(hdiutil mount "$release_file" | awk '/dev.disk/{print$1}')
-    echo "$mountdev"
+    hdiutil imageinfo "$release_file" | cat
   else
     fail "currently only dpkg based installs are supported"
   fi
