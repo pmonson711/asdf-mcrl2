@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for mcrl2.
 GH_REPO="https://github.com/mcrl2org/mcrl2"
 TOOL_NAME="mcrl2"
 TOOL_TEST="mcrl22lps --version"
@@ -14,7 +13,6 @@ fail() {
 
 curl_opts=(-fsSL)
 
-# NOTE: You might want to remove this if mcrl2 is not hosted on GitHub releases.
 if [ -n "${GITHUB_API_TOKEN:-}" ]; then
   curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_API_TOKEN")
 fi
@@ -27,13 +25,25 @@ sort_versions() {
 list_github_tags() {
   git ls-remote --tags --refs "$GH_REPO" |
     grep -o 'refs/tags/mcrl2-.*' | cut -d/ -f3- |
-    sed 's/^mcrl2-//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
+    sed 's/^mcrl2-//'
 }
 
 list_all_versions() {
-  # TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-  # Change this function if mcrl2 has other means of determining installable versions.
   list_github_tags
+}
+
+determine_release_file() {
+  local download_path install_version
+  download_path="$1"
+  install_version="$2"
+
+  if command -v dpkg &>/dev/null; then
+    echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.deb"
+  elif command -v sw_vers &>/dev/null; then
+    echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.dmg"
+  else
+    fail "currently only dpkg based installs are supported"
+  fi
 }
 
 download_release() {
@@ -41,11 +51,34 @@ download_release() {
   version="$1"
   filename="$2"
 
-  # TODO: Adapt the release URL convention for mcrl2
-  url="$GH_REPO/releases/download/mcrl2-${version}/mcrl2-${version}_x86_64.deb"
+  if command -v dpkg &>/dev/null; then
+    url="$GH_REPO/releases/download/mcrl2-${version}/mcrl2-${version}_x86_64.deb"
+  elif command -v sw_vers &>/dev/null; then
+    url="$GH_REPO/releases/download/mcrl2-${version}/mcrl2-${version}_x86_64.dmg"
+  else
+    fail "currently only dpkg based installs are supported"
+  fi
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+}
+
+extract_release() {
+  local release_file download_path
+  release_file="$1"
+  download_path="$2"
+
+  if command -v dpkg &>/dev/null; then
+    dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
+  elif command -v sw_vers &>/dev/null; then
+    7z x "$release_file" -o"$download_path"
+    mv "$(find "$download_path" -type d -name "mCRL2.app")/Contents" "${download_path}/usr"
+    chmod +x "${download_path}"/usr/bin/*
+    ls -al "${download_path}/usr/bin"
+    echo "${download_path}/usr"
+  else
+    fail "currently only dpkg based installs are supported"
+  fi
 }
 
 install_version() {
@@ -61,7 +94,6 @@ install_version() {
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-    # TODO: Asert mcrl2 executable exists.
     local tool_cmd
     tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
     test -x "$install_path/usr/bin/$tool_cmd" || fail "Expected $install_path/usr/bin/$tool_cmd to be executable."

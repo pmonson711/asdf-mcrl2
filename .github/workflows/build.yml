@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
 
 jobs:
@@ -13,6 +13,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+          - macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: asdf_plugin_test
