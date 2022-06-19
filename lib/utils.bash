@@ -39,7 +39,7 @@ determine_release_file() {
 
   if command -v dpkg &> /dev/null; then
     echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.deb"
-  elif command -v sw_vers &> /dev/null; then
+  elif command -v sw_vers &>/dev/null; then
     echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.dmg"
   else
     fail "currently only dpkg based installs are supported"
@@ -51,9 +51,9 @@ download_release() {
   version="$1"
   filename="$2"
 
-  if command -v dpkg &> /dev/null; then
+  if command -v dpkg &>/dev/null; then
     url="$GH_REPO/releases/download/mcrl2-${version}/mcrl2-${version}_x86_64.deb"
-  elif command -v sw_vers &> /dev/null; then
+  elif command -v sw_vers &>/dev/null; then
     url="$GH_REPO/releases/download/mcrl2-${version}/mcrl2-${version}_x86_64.dmg"
   else
     fail "currently only dpkg based installs are supported"
@@ -68,10 +68,10 @@ extract_release() {
   release_file="$1"
   download_path="$2"
 
-  if command -v dpkg &> /dev/null; then
+  if command -v dpkg &>/dev/null; then
     dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
-  elif command -v sw_vers &> /dev/null; then
-    mountdev=$(hdiutil mount "$release_file" | awk "/dev.disk/{print$1}")
+  elif command -v sw_vers &>/dev/null; then
+    mountdev=$(hdiutil mount "$release_file" | awk '/dev.disk/{print$1}')
     echo "$mountdev"
   else
     fail "currently only dpkg based installs are supported"
