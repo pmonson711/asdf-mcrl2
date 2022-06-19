@@ -72,7 +72,7 @@ extract_release() {
     dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
   elif command -v sw_vers &>/dev/null; then
     7z x "$release_file" -o"$download_path"
-    mv "$(find "$download_path" -type d -name "mCRL2.app")/Contents" "$(download_path)/usr"
+    mv "$(find "$download_path" -type d -name "mCRL2.app")/Contents" "${download_path}/usr"
   else
     fail "currently only dpkg based installs are supported"
   fi
