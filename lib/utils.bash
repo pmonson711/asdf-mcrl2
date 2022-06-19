@@ -72,8 +72,7 @@ extract_release() {
     dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
   elif command -v sw_vers &>/dev/null; then
     hdiutil imageinfo "$release_file" | cat
-    hdiutil attach "$release_file"
-    ls -al /Volumes
+    7z x "$release_file"
   else
     fail "currently only dpkg based installs are supported"
   fi
