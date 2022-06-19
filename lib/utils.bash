@@ -72,7 +72,7 @@ extract_release() {
     dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
   elif command -v sw_vers &>/dev/null; then
     7z x "$release_file" -o"$download_path"
-    ls -al "${download_path}/mcrl2-202106.0.54fa1483c9M_x86_64/"
+    ls -al "${download_path}/mcrl2-202106.0.54fa1483c9M_x86_64/mCRL2.app/"
   else
     fail "currently only dpkg based installs are supported"
   fi
