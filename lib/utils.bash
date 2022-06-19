@@ -73,6 +73,7 @@ extract_release() {
   elif command -v sw_vers &>/dev/null; then
     hdiutil imageinfo "$release_file" | cat
     7z x "$release_file"
+    ls -al
   else
     fail "currently only dpkg based installs are supported"
   fi
