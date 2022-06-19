@@ -36,6 +36,14 @@ list_all_versions() {
   list_github_tags
 }
 
+determine_release_file() {
+  local download_path install_version
+  download_path="$1"
+  install_version="$2"
+
+  "${download_path}/$TOOL_NAME-${install_version}_x86_64.deb"
+}
+
 download_release() {
   local version filename url
   version="$1"
@@ -46,6 +54,14 @@ download_release() {
 
   echo "* Downloading $TOOL_NAME release $version..."
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+}
+
+extract_release() {
+  local release_file download_path
+  release_file="$1"
+  download_path="$2"
+
+  dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
 }
 
 install_version() {
