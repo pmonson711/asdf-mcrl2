@@ -37,7 +37,7 @@ determine_release_file() {
   download_path="$1"
   install_version="$2"
 
-  if command -v dpkg &> /dev/null; then
+  if command -v dpkg &>/dev/null; then
     echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.deb"
   elif command -v sw_vers &>/dev/null; then
     echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.dmg"
@@ -72,6 +72,8 @@ extract_release() {
     dpkg -x "$release_file" "$download_path" || fail "Could not extract $release_file"
   elif command -v sw_vers &>/dev/null; then
     hdiutil imageinfo "$release_file" | cat
+    hdiutil attach "$release_file"
+    ls -al /Volumes
   else
     fail "currently only dpkg based installs are supported"
   fi
