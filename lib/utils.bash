@@ -41,7 +41,7 @@ determine_release_file() {
   download_path="$1"
   install_version="$2"
 
-  "${download_path}/$TOOL_NAME-${install_version}_x86_64.deb"
+  echo "${download_path}/$TOOL_NAME-${install_version}_x86_64.deb"
 }
 
 download_release() {
